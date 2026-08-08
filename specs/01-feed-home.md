@@ -1,6 +1,6 @@
 # SPEC 01 — Implementar página Home con feed de publicaciones
 
-> **Status:** Borrador
+> **Status:** Aprobado
 > **Depends on:** —
 > **Date:** 2026-08-08
 > **Objective:** Implementar la página Home del sistema daycare replicando fielmente el diseño del mockup `feed.dc.html` con sidebar, feed de publicaciones y responsive layout.
