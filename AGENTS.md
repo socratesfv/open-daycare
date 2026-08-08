@@ -44,3 +44,8 @@ Daycare management app (guardería) on the Next.js 16 App Router. UI copy, mocku
 ## Spec Drive Development - Skills
 - /spec Usaremos esta habilidad para crear las especificaciones
 - /spec-impl Usaremos esta skill para hacer las implementaciones
+
+## Reglas de código
+- Usar código limpio, nombres, funciones, variables, etc  en ingles.
+
+
