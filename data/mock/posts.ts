@@ -3,6 +3,7 @@ export interface Author {
   name: string;
   initials: string;
   color: string;
+  textColor?: string;
 }
 
 export type PostType = "logro" | "actividad" | "anuncio";
@@ -42,6 +43,7 @@ const mateo: Author = {
   name: "Mateo",
   initials: "M",
   color: "#A9D9E8",
+  textColor: "#1F7A93",
 };
 
 const daycare: Author = {
