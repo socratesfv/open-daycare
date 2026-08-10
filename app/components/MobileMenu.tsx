@@ -14,10 +14,11 @@ function MenuIcon() {
 
 interface MobileMenuProps {
   user: User;
+  activeItem?: string;
   children: ReactNode;
 }
 
-export default function MobileMenu({ user, children }: MobileMenuProps) {
+export default function MobileMenu({ user, activeItem = "Feed", children }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -30,7 +31,7 @@ export default function MobileMenu({ user, children }: MobileMenuProps) {
       >
         <MenuIcon />
       </button>
-      <Sidebar user={user} isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <Sidebar user={user} activeItem={activeItem} isOpen={isOpen} onClose={() => setIsOpen(false)} />
       {children}
     </div>
   );
