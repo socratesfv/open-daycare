@@ -4,11 +4,13 @@ import { useState } from "react";
 import MobileMenu from "@/app/components/MobileMenu";
 import SearchBar from "@/app/components/SearchBar";
 import ChildCard from "@/app/components/ChildCard";
+import AddChildModal from "@/app/components/AddChildModal";
 import { children } from "@/data/mock/children";
 import { currentUser } from "@/data/mock/posts";
 
 export default function KidsPage() {
   const [query, setQuery] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const normalizedQuery = query.trim().toLowerCase();
   const visibleChildren = children.filter((child) => child.name.toLowerCase().includes(normalizedQuery));
 
@@ -23,6 +25,7 @@ export default function KidsPage() {
             </div>
             <button
               type="button"
+              onClick={() => setIsAddModalOpen(true)}
               className="flex items-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] px-[18px] py-[11px] text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.7)]"
             >
               <svg
@@ -64,6 +67,8 @@ export default function KidsPage() {
           )}
         </div>
       </main>
+
+      <AddChildModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
     </MobileMenu>
   );
 }
