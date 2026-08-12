@@ -128,3 +128,46 @@ export const children: Child[] = [
     ],
   },
 ];
+
+export interface ChildFormData {
+  name: string;
+  birthDate: string;
+  room: string;
+  allergies?: string;
+  medicalNotes?: string;
+}
+
+const CHILD_COLORS = ["A9D9E8", "F4B8CC", "B9DEC4", "F4DC8E", "C9B6E8", "A9C7E8"];
+
+export function addChild(data: ChildFormData): Child {
+  const newChild: Child = {
+    id: `child-${Date.now()}`,
+    name: data.name,
+    initials: data.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase(),
+    color: CHILD_COLORS[Math.floor(Math.random() * CHILD_COLORS.length)],
+    age: calculateAge(data.birthDate),
+    room: data.room,
+    admissionDate: new Date().toISOString().split("T")[0],
+    birthDate: data.birthDate,
+    allergies: data.allergies,
+    parents: [],
+  };
+  children.push(newChild);
+  return newChild;
+}
+
+function calculateAge(birthDate: string): number {
+  const today = new Date();
+  const birth = new Date(`${birthDate}T00:00:00`);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
