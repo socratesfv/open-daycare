@@ -2,6 +2,7 @@ import type { Parent } from "@/data/mock/children";
 
 interface ParentListProps {
   parents: Parent[];
+  onLinkParent?: () => void;
 }
 
 function statusMeta(status: Parent["status"]) {
@@ -9,7 +10,7 @@ function statusMeta(status: Parent["status"]) {
   return { label: "PENDIENTE", badgeClass: "bg-[#F7E7A6] text-[#9A7B1E]", subtitle: "invitación enviada" };
 }
 
-export default function ParentList({ parents }: ParentListProps) {
+export default function ParentList({ parents, onLinkParent }: ParentListProps) {
   return (
     <div className="rounded-[16px] border border-[#ECE0D0] bg-[#FFFDF9] px-[18px] py-4">
       <div className="mb-[14px] text-[12.5px] font-extrabold uppercase tracking-[.8px] text-[#8A7C6D]">
@@ -41,7 +42,7 @@ export default function ParentList({ parents }: ParentListProps) {
             </div>
           );
         })}
-        <button type="button" className="flex items-center gap-3 pt-2">
+        <button type="button" onClick={onLinkParent} className="flex items-center gap-3 pt-2">
           <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border-[1.5px] border-dashed border-[#D8CBBA] text-[#B0A290]">
             <svg
               width="18"
