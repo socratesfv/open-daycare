@@ -19,7 +19,7 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
 };
 
 export interface PostFormData {
-  childId: string;
+  childIds: string[];
   type: PostType;
   description: string;
   photos: File[];

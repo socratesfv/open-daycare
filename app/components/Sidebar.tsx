@@ -78,9 +78,10 @@ interface SidebarProps {
   activeItem?: string;
   isOpen?: boolean;
   onClose?: () => void;
+  onNewPost?: () => void;
 }
 
-export default function Sidebar({ user, activeItem = "Feed", isOpen = false, onClose }: SidebarProps) {
+export default function Sidebar({ user, activeItem = "Feed", isOpen = false, onClose, onNewPost }: SidebarProps) {
   return (
     <>
       {isOpen && <div className="fixed inset-0 z-30 bg-black/30 md:hidden" onClick={onClose} />}
@@ -99,13 +100,14 @@ export default function Sidebar({ user, activeItem = "Feed", isOpen = false, onC
           </div>
         </a>
 
-        <a
-          href="#"
+        <button
+          type="button"
+          onClick={onNewPost}
           className="mb-[18px] flex w-full items-center justify-center gap-2 rounded-[14px] bg-[linear-gradient(180deg,#F4977E,#EE8164)] px-4 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(238,129,100,.75)]"
         >
           <PlusIcon />
           Nueva publicación
-        </a>
+        </button>
 
         <nav className="flex flex-1 flex-col gap-1">
           {navItems.map((item) => {

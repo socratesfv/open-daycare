@@ -7,7 +7,6 @@ import { POST_TYPE_CONFIG, type PostType } from "@/data/mock/posts";
 const MAX_PHOTOS = 4;
 const MAX_PHOTO_SIZE_MB = 4;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const ALL_ROOM = "all";
 
 const CHILD_TEXT_COLORS: Record<string, string> = {
   A9D9E8: "#1F7A93",
@@ -65,7 +64,7 @@ function CloseIcon() {
 }
 
 export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
-  const [childId, setChildId] = useState("");
+  const [selectedChildIds, setSelectedChildIds] = useState<string[]>([]);
   const [type, setType] = useState<PostType | "">("");
   const [description, setDescription] = useState("");
   const [photos, setPhotos] = useState<SelectedPhoto[]>([]);
@@ -75,7 +74,9 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
 
   if (!isOpen) return null;
 
-  const childEmpty = childId === "";
+  const allChildIds = children.map((child) => child.id);
+  const allRoomSelected = allChildIds.length > 0 && allChildIds.every((id) => selectedChildIds.includes(id));
+  const childEmpty = selectedChildIds.length === 0;
   const typeEmpty = type === "";
   const descriptionEmpty = description.trim().length === 0;
   const photosEmpty = photos.length === 0;
@@ -87,13 +88,25 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
 
   const handleClose = () => {
     photos.forEach((photo) => URL.revokeObjectURL(photo.url));
-    setChildId("");
+    setSelectedChildIds([]);
     setType("");
     setDescription("");
     setPhotos([]);
     setSubmitted(false);
     setFileError("");
     onClose();
+  };
+
+  const toggleChild = (childId: string) => {
+    setSelectedChildIds((prev) =>
+      prev.includes(childId) ? prev.filter((id) => id !== childId) : [...prev, childId],
+    );
+  };
+
+  const toggleAllRoom = () => {
+    setSelectedChildIds((prev) =>
+      prev.length === allChildIds.length ? [] : allChildIds,
+    );
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -129,7 +142,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
   const handleSubmit = () => {
     setSubmitted(true);
     if (childEmpty || typeEmpty || descriptionEmpty || photosEmpty || fileError) return;
-    console.log("Nueva publicación", { childId, type, description, photos: photos.map((p) => p.file) });
+    console.log("Nueva publicación", { childIds: selectedChildIds, type, description, photos: photos.map((p) => p.file) });
     handleClose();
   };
 
@@ -144,11 +157,13 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
     }`;
 
   const allRoomChipClass = (selected: boolean) =>
-    `rounded-full border-[1.5px] px-4 py-[6px] text-[14px] font-bold ${
+    `flex items-center gap-2 rounded-full border-[1.5px] px-4 py-[6px] text-[14px] font-bold ${
       selected
         ? "border-[#3F362E] bg-[#3F362E] text-white"
         : "border-[#ECE0D0] bg-[#FFFDF9] text-[#6E6359]"
     }`;
+
+  const checkClass = "flex-none";
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80">
@@ -174,12 +189,12 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
               <div className={sectionLabel}>Para</div>
               <div className="flex flex-wrap gap-[9px]">
                 {children.map((child) => {
-                  const selected = childId === child.id;
+                  const selected = selectedChildIds.includes(child.id);
                   return (
                     <button
                       key={child.id}
                       type="button"
-                      onClick={() => setChildId(child.id)}
+                      onClick={() => toggleChild(child.id)}
                       className={childChipClass(selected)}
                     >
                       <span
@@ -192,15 +207,48 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                         {child.initials}
                       </span>
                       {child.name.split(" ")[0]}
+                      {selected && (
+                        <svg
+                          className={checkClass}
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      )}
                     </button>
                   );
                 })}
                 <button
                   type="button"
-                  onClick={() => setChildId(ALL_ROOM)}
-                  className={allRoomChipClass(childId === ALL_ROOM)}
+                  onClick={toggleAllRoom}
+                  className={allRoomChipClass(allRoomSelected)}
                 >
                   Toda la sala
+                  <span
+                    className={`flex h-[18px] w-[18px] flex-none items-center justify-center rounded-[5px] border-[1.5px] ${
+                      allRoomSelected ? "border-white bg-white text-[#3F362E]" : "border-[#CBB89F] bg-white text-transparent"
+                    }`}
+                  >
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </span>
                 </button>
               </div>
               {showChildError && <p className={errorMessage}>Campo obligatorio</p>}

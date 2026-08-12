@@ -3,7 +3,7 @@
 > **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-11
-> **Objective:** Implementar modal con formulario validado para crear publicaciones, accesible desde el feed principal, con selección de niño, tipo, descripción y adjunto de fotos.
+> **Objective:** Implementar modal con formulario validado para crear publicaciones, accesible desde el feed principal y desde el sidebar, con selección multiple de niños, tipo, descripción y adjunto de fotos.
 
 ---
 
@@ -12,7 +12,7 @@
 **In:**
 
 - Modal con formulario de crear publicación que replica el diseño de `crear-publicacion.dc.html`
-- Campo "Para": selección de un niño (radio buttons) usando datos mock de `children.ts`, más opción "Toda la sala"
+- Campo "Para": selección múltiple de niños (chips) usando datos mock de `children.ts`, con checkbox "Toda la sala" que selecciona/deselecciona todos
 - Campo "Tipo": selección de un tipo de publicación (radio buttons) con 7 opciones: Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio
 - Campo "Descripción": textarea obligatorio
 - Campo "Fotos": input file real para subir imágenes (jpg, png, webp), máximo 4 fotos, máximo 4MB por foto
@@ -50,7 +50,7 @@ export type PostType = "comida" | "siesta" | "actividad" | "logro" | "animo" | "
 
 // Nueva interfaz para el formulario de publicación
 export interface PostFormData {
-  childId: string; // "all" para "Toda la sala", o ID del niño
+  childIds: string[]; // IDs de niños seleccionados
   type: PostType;
   description: string;
   photos: File[]; // máximo 4 archivos
@@ -59,7 +59,7 @@ export interface PostFormData {
 
 Convenciones:
 
-- `childId` usa `"all"` como valor especial para "Toda la sala"
+- `childIds` es un array con los IDs de los niños seleccionados (multiselección)
 - `photos` es un array de objetos `File` del navegador
 - Cada foto no debe exceder 4MB
 - Tipos de archivo permitidos: `image/jpeg`, `image/png`, `image/webp`
@@ -92,7 +92,7 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
 2. **Crear componente `app/components/CreatePostModal.tsx`** con:
    - Props: `isOpen`, `onClose`
    - Estado del formulario controlado con `useState`
-   - Campo "Para": lista de niños desde `children.ts` + "Toda la sala"
+   - Campo "Para": lista de niños desde `children.ts` como chips con check + checkbox "Toda la sala" (toggle-all)
    - Campo "Tipo": 7 botones de tipo con colores del mockup
    - Campo "Descripción": textarea
    - Campo "Fotos": input file con validación de tipo y tamaño
@@ -103,18 +103,18 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
    - Botón "Publicar" que valida y muestra errores
 
 3. **Implementar validación del formulario**:
-   - Todos los campos son obligatorios
+   - Todos los campos son obligatorios (al menos un niño seleccionado)
    - Validación al presionar "Publicar" (no en tiempo real)
    - Mensajes de error debajo de cada campo
    - Botón "Publicar" siempre habilitado; valida al presionar
    - Validación de archivos: tipo (jpg/png/webp) y tamaño (≤4MB)
    - Máximo 4 fotos
 
-4. **Modificar `app/page.tsx`** (feed principal) para:
-   - Importar `CreatePostModal`
-   - Agregar estado `isCreatePostModalOpen`
-   - Botón para abrir el modal (agregar si no existe)
-   - Renderizar `<CreatePostModal isOpen={isCreatePostModalOpen} onClose={() => setIsCreatePostModalOpen(false)} />`
+4. **Modificar feed y sidebar para abrir el modal**:
+   - `app/page.tsx`: quitar estado local del modal
+   - `app/components/MobileMenu.tsx`: elevar estado del modal (contexto `CreatePostContext` + hook `useCreatePostModal`), pasar `onNewPost` a `Sidebar`, renderizar `<CreatePostModal>`
+   - `app/components/Sidebar.tsx`: botón "Nueva publicación" con prop `onNewPost`
+   - `app/components/CreatePostCard.tsx`: abrir el modal vía `useCreatePostModal`
 
 5. **Probar flujo completo**:
    - Abrir modal → se muestra con fondo oscuro 0.8
@@ -133,8 +133,11 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
 ## Acceptance criteria
 
 - [x] El modal se abre con fondo overlay de opacidad 0.8
-- [x] El campo "Para" muestra todos los niños de `children.ts` + "Toda la sala"
-- [x] Solo se puede seleccionar un niño a la vez (radio buttons)
+- [x] El campo "Para" muestra todos los niños de `children.ts` + checkbox "Toda la sala"
+- [x] Se pueden seleccionar varios niños a la vez (multiselección con chips)
+- [x] "Toda la sala" selecciona/deselecciona todos los niños (toggle-all)
+- [x] El modal se puede abrir desde el botón "Nueva publicación" del sidebar
+- [x] El modal se puede abrir desde la tarjeta "Nueva publicación" del feed
 - [x] El campo "Tipo" muestra 7 opciones: Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio
 - [x] Solo se puede seleccionar un tipo a la vez (radio buttons)
 - [x] Cada tipo de publicación tiene su color de fondo y texto según el mockup
@@ -159,6 +162,8 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
 
 ## Decisions
 
+- **Sí:** Selección múltiple de niños en "Para" con chips + toggle "Toda la sala". Lo solicitó el usuario después de la primera implementación.
+- **Sí:** El modal se abre desde el feed (tarjeta) y desde el sidebar (botón "Nueva publicación"). Estado del modal elevado a `MobileMenu` vía `CreatePostContext`.
 - **Sí:** Expandir `PostType` existente en lugar de crear un tipo nuevo. Mantiene coherencia con el modelo de datos.
 - **Sí:** Input file real para fotos. El usuario solicitó funcionalidad de upload.
 - **Sí:** Imágenes estándar (jpg, png, webp) con máximo 4MB por foto. Suficiente para uso en guardería.
