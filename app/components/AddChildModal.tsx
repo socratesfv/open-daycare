@@ -66,7 +66,7 @@ export default function AddChildModal({ isOpen, onClose }: AddChildModalProps) {
   const labelClass = "mb-2 text-[12px] font-extrabold uppercase tracking-[0.7px] text-[#94887B]";
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F6ECDF]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80">
       <div className="flex h-full md:min-h-full md:items-center md:justify-center">
         <div
           role="dialog"
