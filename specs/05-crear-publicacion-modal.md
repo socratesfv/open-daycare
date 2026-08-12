@@ -1,6 +1,6 @@
 # SPEC 05 — Modal de crear publicación con formulario validado
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-08-11
 > **Objective:** Implementar modal con formulario validado para crear publicaciones, accesible desde el feed principal, con selección de niño, tipo, descripción y adjunto de fotos.
@@ -132,28 +132,28 @@ export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; tex
 
 ## Acceptance criteria
 
-- [ ] El modal se abre con fondo overlay de opacidad 0.8
-- [ ] El campo "Para" muestra todos los niños de `children.ts` + "Toda la sala"
-- [ ] Solo se puede seleccionar un niño a la vez (radio buttons)
-- [ ] El campo "Tipo" muestra 7 opciones: Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio
-- [ ] Solo se puede seleccionar un tipo a la vez (radio buttons)
-- [ ] Cada tipo de publicación tiene su color de fondo y texto según el mockup
-- [ ] El campo "Descripción" es un textarea obligatorio
-- [ ] El campo "Fotos" usa `<input type="file">` real
-- [ ] Solo se permiten archivos jpg, png y webp
-- [ ] Cada foto no puede exceder 4MB
-- [ ] Se pueden adjuntar máximo 4 fotos
-- [ ] Las fotos seleccionadas muestran preview con opción de eliminar
-- [ ] Todos los campos muestran error cuando están vacíos al presionar "Publicar"
-- [ ] Los archivos inválidos muestran error de tipo o tamaño
-- [ ] El botón "Publicar" está siempre habilitado; al presionarlo valida y muestra errores
-- [ ] Al presionar "Publicar" con datos válidos se hace console.log con los datos
-- [ ] Al presionar "Publicar" el modal se cierra
-- [ ] El botón "Cancelar" superior cierra el modal
-- [ ] Click fuera del modal NO cierra el modal
-- [ ] El diseño replica fielmente el mockup `crear-publicacion.dc.html`
-- [ ] Los colores coinciden: fondo overlay #000 con opacidad 0.8, cards #FBF4EC, bordes #EADFD0
-- [ ] El modal es responsive: fullscreen en móvil (<768px), centrado en desktop
+- [x] El modal se abre con fondo overlay de opacidad 0.8
+- [x] El campo "Para" muestra todos los niños de `children.ts` + "Toda la sala"
+- [x] Solo se puede seleccionar un niño a la vez (radio buttons)
+- [x] El campo "Tipo" muestra 7 opciones: Comida, Siesta, Actividad, Logro, Ánimo, Foto, Anuncio
+- [x] Solo se puede seleccionar un tipo a la vez (radio buttons)
+- [x] Cada tipo de publicación tiene su color de fondo y texto según el mockup
+- [x] El campo "Descripción" es un textarea obligatorio
+- [x] El campo "Fotos" usa `<input type="file">` real
+- [x] Solo se permiten archivos jpg, png y webp
+- [x] Cada foto no puede exceder 4MB
+- [x] Se pueden adjuntar máximo 4 fotos
+- [x] Las fotos seleccionadas muestran preview con opción de eliminar
+- [x] Todos los campos muestran error cuando están vacíos al presionar "Publicar"
+- [x] Los archivos inválidos muestran error de tipo o tamaño
+- [x] El botón "Publicar" está siempre habilitado; al presionarlo valida y muestra errores
+- [x] Al presionar "Publicar" con datos válidos se hace console.log con los datos
+- [x] Al presionar "Publicar" el modal se cierra
+- [x] El botón "Cancelar" superior cierra el modal
+- [x] Click fuera del modal NO cierra el modal
+- [x] El diseño replica fielmente el mockup `crear-publicacion.dc.html`
+- [x] Los colores coinciden: fondo overlay #000 con opacidad 0.8, cards #FBF4EC, bordes #EADFD0
+- [x] El modal es responsive: fullscreen en móvil (<768px), centrado en desktop
 
 ---
 

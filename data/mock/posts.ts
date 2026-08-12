@@ -6,7 +6,24 @@ export interface Author {
   textColor?: string;
 }
 
-export type PostType = "logro" | "actividad" | "anuncio";
+export type PostType = "comida" | "siesta" | "actividad" | "logro" | "animo" | "foto" | "anuncio";
+
+export const POST_TYPE_CONFIG: Record<PostType, { label: string; bg: string; text: string }> = {
+  comida: { label: "Comida", bg: "#9A7B1E", text: "#fff" },
+  siesta: { label: "Siesta", bg: "#E7DCF6", text: "#7B5FC0" },
+  actividad: { label: "Actividad", bg: "#2E89A6", text: "#fff" },
+  logro: { label: "Logro", bg: "#CFEBD8", text: "#3E9B6C" },
+  animo: { label: "Ánimo", bg: "#F9D2DE", text: "#C56486" },
+  foto: { label: "Foto", bg: "#FBD8CC", text: "#D9684A" },
+  anuncio: { label: "Anuncio", bg: "#CCD8F4", text: "#4E72C8" },
+};
+
+export interface PostFormData {
+  childId: string;
+  type: PostType;
+  description: string;
+  photos: File[];
+}
 
 export interface Post {
   id: string;
