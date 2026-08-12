@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import Sidebar from "./Sidebar";
+import CreatePostModal from "./CreatePostModal";
 import type { User } from "@/data/mock/posts";
+
+const CreatePostContext = createContext<() => void>(() => {});
+
+export function useCreatePostModal() {
+  return useContext(CreatePostContext);
+}
 
 function MenuIcon() {
   return (
@@ -20,19 +27,31 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ user, activeItem = "Feed", children }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+
+  const openCreatePostModal = () => setIsCreatePostModalOpen(true);
 
   return (
-    <div className="flex min-h-screen bg-[#F6ECDF]">
-      <button
-        type="button"
-        aria-label="Abrir menú"
-        onClick={() => setIsOpen(true)}
-        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#FFFDF9] text-[#3F362E] shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)] md:hidden"
-      >
-        <MenuIcon />
-      </button>
-      <Sidebar user={user} activeItem={activeItem} isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      {children}
-    </div>
+    <CreatePostContext.Provider value={openCreatePostModal}>
+      <div className="flex min-h-screen bg-[#F6ECDF]">
+        <button
+          type="button"
+          aria-label="Abrir menú"
+          onClick={() => setIsOpen(true)}
+          className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#FFFDF9] text-[#3F362E] shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)] md:hidden"
+        >
+          <MenuIcon />
+        </button>
+        <Sidebar
+          user={user}
+          activeItem={activeItem}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onNewPost={openCreatePostModal}
+        />
+        {children}
+      </div>
+      <CreatePostModal isOpen={isCreatePostModalOpen} onClose={() => setIsCreatePostModalOpen(false)} />
+    </CreatePostContext.Provider>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import MobileMenu from "@/app/components/MobileMenu";
 import FeedHeader from "@/app/components/FeedHeader";
 import CreatePostCard from "@/app/components/CreatePostCard";

@@ -7,14 +7,22 @@ interface PostTypeStyle {
 }
 
 const typeStyles: Record<Post["type"], PostTypeStyle> = {
+  comida: { badgeClass: "bg-[#9A7B1E]", dotClass: "bg-[#F4D06A]", labelClass: "text-white" },
+  siesta: { badgeClass: "bg-[#E7DCF6]", dotClass: "bg-[#7B5FC0]", labelClass: "text-[#7B5FC0]" },
+  actividad: { badgeClass: "bg-[#2E89A6]", dotClass: "bg-[#BFE6F0]", labelClass: "text-white" },
   logro: { badgeClass: "bg-[#CFEBD8]", dotClass: "bg-[#3E9B6C]", labelClass: "text-[#3E9B6C]" },
-  actividad: { badgeClass: "bg-[#C7E7F1]", dotClass: "bg-[#2E89A6]", labelClass: "text-[#2E89A6]" },
+  animo: { badgeClass: "bg-[#F9D2DE]", dotClass: "bg-[#C56486]", labelClass: "text-[#C56486]" },
+  foto: { badgeClass: "bg-[#FBD8CC]", dotClass: "bg-[#D9684A]", labelClass: "text-[#D9684A]" },
   anuncio: { badgeClass: "bg-[#CCD8F4]", dotClass: "bg-[#4E72C8]", labelClass: "text-[#4E72C8]" },
 };
 
 const typeLabels: Record<Post["type"], string> = {
-  logro: "LOGRO",
+  comida: "COMIDA",
+  siesta: "SIESTA",
   actividad: "ACTIVIDAD",
+  logro: "LOGRO",
+  animo: "ÁNIMO",
+  foto: "FOTO",
   anuncio: "ANUNCIO",
 };
 

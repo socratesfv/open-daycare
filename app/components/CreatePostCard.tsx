@@ -1,4 +1,7 @@
+"use client";
+
 import type { User } from "@/data/mock/posts";
+import { useCreatePostModal } from "./MobileMenu";
 
 function CameraIcon() {
   return (
@@ -14,10 +17,13 @@ interface CreatePostCardProps {
 }
 
 export default function CreatePostCard({ user }: CreatePostCardProps) {
+  const openCreatePostModal = useCreatePostModal();
+
   return (
-    <a
-      href="#"
-      className="mb-6 flex items-center gap-3.5 rounded-[18px] border border-[#ECE0D0] bg-[#FFFDF9] px-[18px] py-3.5 shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)]"
+    <button
+      type="button"
+      onClick={openCreatePostModal}
+      className="mb-6 flex w-full items-center gap-3.5 rounded-[18px] border border-[#ECE0D0] bg-[#FFFDF9] px-[18px] py-3.5 text-left shadow-[0_4px_14px_-10px_rgba(120,90,60,.4)]"
     >
       <div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[#F2937A] font-display text-base font-semibold text-white">
         {user.initials}
@@ -26,6 +32,6 @@ export default function CreatePostCard({ user }: CreatePostCardProps) {
       <span className="flex h-[38px] w-[38px] flex-none items-center justify-center rounded-[12px] bg-[#FBE3D8] text-[#E0654A]">
         <CameraIcon />
       </span>
-    </a>
+    </button>
   );
 }
