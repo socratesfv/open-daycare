@@ -73,8 +73,8 @@ Convenciones:
    - Campo "Email" (input email, obligatorio, validación de formato con regex)
    - Campo "Parentesco" (botones toggle: Mamá/Papá/Tutor/a, obligatorio)
    - Mensajes de error debajo de cada campo cuando está vacío o inválido
-   - Botón "Enviar invitación" deshabilitado hasta que todos los campos sean válidos
-   - Al presionar "Enviar invitación": solo mostrar console.log con los datos (sin persistencia)
+   - Botón "Enviar invitación" siempre habilitado; al presionarlo valida y muestra errores
+   - Al presionar "Enviar invitación" con datos válidos: console.log con los datos y cierre del modal (sin persistencia)
 
 3. **Modificar `app/ninos/[id]/page.tsx`** para:
    - Importar `LinkParentModal`
@@ -104,7 +104,7 @@ Convenciones:
 - [ ] Los botones de parentesco tienen estados seleccionado/no seleccionado
 - [ ] Todos los campos muestran error cuando están vacíos al presionar "Enviar"
 - [ ] El campo email muestra error cuando el formato es inválido
-- [ ] El botón "Enviar invitación" está deshabilitado hasta que todos los campos sean válidos
+- [ ] El botón "Enviar invitación" está siempre habilitado; al presionarlo valida y muestra errores
 - [ ] El código de invitación se autogenera (5 caracteres alfanuméricos)
 - [ ] El código de invitación se muestra en el recuadro amarillo punteado
 - [ ] El botón "X" superior cierra el modal
@@ -120,7 +120,7 @@ Convenciones:
 
 - **Sí:** Usar `<input type="email">` nativo para validación básica de email + regex adicional para asegurar dominio válido.
 - **Sí:** Validación al presionar "Enviar invitación" (no en tiempo real) según lo solicitado por el usuario.
-- **Sí:** Botón "Enviar invitación" deshabilitado con `disabled` y opacidad CSS hasta que el formulario sea válido.
+- **Sí:** Botón "Enviar invitación" siempre habilitado; valida al presionar y muestra errores. El usuario eligió esto al resolver la contradicción con el criterio original de botón deshabilitado (que se descartó).
 - **Sí:** Fondo overlay con opacidad 0.8 según especificación del usuario.
 - **Sí:** Click fuera del modal cierra el modal (a diferencia del SPEC 03 donde no se cerraba).
 - **Sí:** Código de invitación de 5 caracteres alfanuméricos como en el mockup.

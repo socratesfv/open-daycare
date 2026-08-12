@@ -1,11 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import type { Child } from "@/data/mock/children";
 import ParentList from "./ParentList";
+import LinkParentModal from "./LinkParentModal";
 
 interface ChildProfileProps {
   child: Child;
 }
 
 export default function ChildProfile({ child }: ChildProfileProps) {
+  const [isLinkParentModalOpen, setIsLinkParentModalOpen] = useState(false);
+
   return (
     <div className="flex flex-wrap items-start gap-[26px]">
       <div className="flex min-w-[300px] flex-1 flex-col gap-[18px]">
@@ -90,8 +96,17 @@ export default function ChildProfile({ child }: ChildProfileProps) {
           </svg>
           Resumen del día
         </button>
-        <ParentList parents={child.parents} />
+        <ParentList
+          parents={child.parents}
+          onLinkParent={() => setIsLinkParentModalOpen(true)}
+        />
       </div>
+
+      <LinkParentModal
+        isOpen={isLinkParentModalOpen}
+        onClose={() => setIsLinkParentModalOpen(false)}
+        childName={child.name}
+      />
     </div>
   );
 }
