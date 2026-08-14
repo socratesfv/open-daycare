@@ -49,7 +49,7 @@ Daycare management app (guardería) on the Next.js 16 App Router. UI copy, mocku
 ## Supabase
 
 - Project ref: `kwuomokdodheudsfigev` · API URL: `https://kwuomokdodheudsfigev.supabase.co` (datos en el MCP de usuario).
-- No hay CLI de Supabase instalado → usa las tools MCP (`execute_sql`, `apply_migration`, `get_advisors`) en lugar de `supabase db ...`. No existe carpeta `supabase/` ni `.mcp.json` en el repo.
+- No hay CLI de Supabase instalado → usa las tools MCP (`execute_sql`, `apply_migration`, `get_advisors`) en lugar de `supabase db ...`. No existe `.mcp.json` en el repo; sí existe `supabase/migrations/` con el historial de migraciones versionadas.
 - **Siempre usar migraciones:** TODA manipulación de la base de datos (crear/alterar/drop de tablas, columnas, índices, RLS, políticas, funciones, triggers, comentarios, cambios de esquema o estructura) debe hacerse mediante `apply_migration` con un nombre descriptivo en snake_case. Nunca uses `execute_sql` para cambiar el esquema: esa herramienta queda reservada para consultas de solo lectura (SELECT) y verificación/diagnóstico. Cada `apply_migration` registra una entrada de migración versionada y deja historial auditable.
 - Env: `.env.template` define `SUPABASE_DB_PASSWORD`. `.env` está gitignored (`.gitignore` permite `.env.template`). No commitees claves/secretos.
 - Reglas de oro (ver skills para el detalle completo):
@@ -58,6 +58,11 @@ Daycare management app (guardería) on the Next.js 16 App Router. UI copy, mocku
   - Nunca expongas `service_role`/secret keys en el frontend; en Next.js todo `NEXT_PUBLIC_*` va al navegador.
   - Views no bypass RLS con `security_invoker = true`; UPDATE requiere política SELECT; las funciones `SECURITY DEFINER` en `public` son públicas.
   - Para iterar esquemas usa `apply_migration` con nombres descriptivos (cada llamada crea una entrada de migración); `execute_sql` es solo para consultas de solo lectura y diagnóstico.
+- SDK cliente: la app interactúa con la base de datos desde el código de la aplicación usando los paquetes oficiales de Supabase (`@supabase/supabase-js` y `@supabase/ssr`) — nunca SQL directo desde el frontend. Helpers en `utils/supabase/`:
+  - `server.ts` — `createClient(cookieStore)` para Server Components / Route Handlers / Server Actions (`createServerClient` de `@supabase/ssr`; `cookies()` es async en Next 16).
+  - `client.ts` — `createClient()` para componentes client (`createBrowserClient`).
+  - `middleware.ts` — helper para refrescar sesiones desde un `proxy.ts` raíz (en Next 16 el middleware se llama `proxy.ts`, no `middleware.ts`).
+  - Credenciales en `.env.local`: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (publishable key, no anon/secret). `.env.local` está gitignored — no commitear claves.
 - SDK cliente: antes de usarlo, consulta la doc actual vía Context7/MCP `search_docs` (Supabase cambia seguido).
 
 ## Spec Drive Development - Skills
