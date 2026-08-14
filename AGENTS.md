@@ -50,13 +50,14 @@ Daycare management app (guardería) on the Next.js 16 App Router. UI copy, mocku
 
 - Project ref: `kwuomokdodheudsfigev` · API URL: `https://kwuomokdodheudsfigev.supabase.co` (datos en el MCP de usuario).
 - No hay CLI de Supabase instalado → usa las tools MCP (`execute_sql`, `apply_migration`, `get_advisors`) en lugar de `supabase db ...`. No existe carpeta `supabase/` ni `.mcp.json` en el repo.
+- **Siempre usar migraciones:** TODA manipulación de la base de datos (crear/alterar/drop de tablas, columnas, índices, RLS, políticas, funciones, triggers, comentarios, cambios de esquema o estructura) debe hacerse mediante `apply_migration` con un nombre descriptivo en snake_case. Nunca uses `execute_sql` para cambiar el esquema: esa herramienta queda reservada para consultas de solo lectura (SELECT) y verificación/diagnóstico. Cada `apply_migration` registra una entrada de migración versionada y deja historial auditable.
 - Env: `.env.template` define `SUPABASE_DB_PASSWORD`. `.env` está gitignored (`.gitignore` permite `.env.template`). No commitees claves/secretos.
 - Reglas de oro (ver skills para el detalle completo):
   - Activa RLS en TODA tabla de `public` y crea políticas con el patrón `TO authenticated USING (owner)`, nunca solo `TO authenticated`.
   - Nunca uses `user_metadata` en decisiones de autorización (es editable por el usuario); usa `app_metadata`.
   - Nunca expongas `service_role`/secret keys en el frontend; en Next.js todo `NEXT_PUBLIC_*` va al navegador.
   - Views no bypass RLS con `security_invoker = true`; UPDATE requiere política SELECT; las funciones `SECURITY DEFINER` en `public` son públicas.
-  - Para iterar esquemas usa `execute_sql`; `apply_migration` crea una entrada de migración en cada llamada (no iterar con ella).
+  - Para iterar esquemas usa `apply_migration` con nombres descriptivos (cada llamada crea una entrada de migración); `execute_sql` es solo para consultas de solo lectura y diagnóstico.
 - SDK cliente: antes de usarlo, consulta la doc actual vía Context7/MCP `search_docs` (Supabase cambia seguido).
 
 ## Spec Drive Development - Skills
