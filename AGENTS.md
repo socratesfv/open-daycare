@@ -34,7 +34,7 @@ Daycare management app (guardería) on the Next.js 16 App Router. UI copy, mocku
 - `app/` — App Router source. Still the create-next-app starter page; the app is not built yet.
 - `references/pantallas/*.dc.html` — interactive UI mockups (design docs in dc-runtime format, rendered via `support.js`). They are **reference material, not app code** — do not edit or import them.
 - `references/screenshots/*.png` — Playwright reference screenshots.
-- `specs/` — spec-driven workflow output (folder does not exist yet; see skills).
+- `specs/` — spec-driven workflow output (see skills). Any spec that touches the database (schema, tables, enums, RLS, migrations, triggers, functions, seed data) MUST be written under `specs/database/`, not at the `specs/` root. UI/feature specs stay at the root.
 
 ## Skills / workflow
 

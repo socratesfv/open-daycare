@@ -8,7 +8,7 @@
     }
   },
   "references": {
-    "docs": "../07-DB-Schema",
+    "db-schema": "../07-DB-Schema",
     "description": ""
   },
   "permission": {
