@@ -1,24 +1,22 @@
 import Link from "next/link";
-import type { Child } from "@/data/mock/children";
+import type { ChildRow } from "@/utils/supabase/children";
+import { getInitials, getAvatarColor, calculateAge, translateAllergy } from "@/utils/child-display";
 
 interface ChildCardProps {
-  child: Child;
+  child: ChildRow;
+  roomName: string;
 }
 
-function parentCountLabel(parents: Child["parents"]): string {
-  if (parents.length === 0) return "sin padres vinculados";
-  if (parents.length === 1) return "1 padre vinculado";
-  return `${parents.length} padres vinculados`;
+function allergyBadge(child: ChildRow): string | null {
+  if (!child.allergy_tags || child.allergy_tags.length === 0) return null;
+  return translateAllergy(child.allergy_tags[0]).toUpperCase();
 }
 
-function allergyBadge(child: Child): string | null {
-  if (!child.allergies) return null;
-  return child.allergies.split(" ")[0].replace(/[:;.,!]/g, "").toUpperCase();
-}
-
-export default function ChildCard({ child }: ChildCardProps) {
-  const hasActiveParent = child.parents.some((parent) => parent.status === "active");
+export default function ChildCard({ child, roomName }: ChildCardProps) {
   const badge = allergyBadge(child);
+  const initials = getInitials(child.full_name);
+  const color = getAvatarColor(child.full_name);
+  const age = calculateAge(child.birth_date);
 
   return (
     <Link
@@ -27,21 +25,17 @@ export default function ChildCard({ child }: ChildCardProps) {
     >
       <div
         className="flex h-12 w-12 flex-none items-center justify-center rounded-full font-display text-[19px] font-semibold text-white"
-        style={{ backgroundColor: `#${child.color}` }}
+        style={{ backgroundColor: `#${color}` }}
       >
-        {child.initials}
+        {initials}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate font-display text-base font-semibold text-[#3F362E]">{child.name}</div>
+        <div className="truncate font-display text-base font-semibold text-[#3F362E]">{child.full_name}</div>
         <div className="truncate text-[13px] text-[#A89A8B]">
-          {child.age} años · {parentCountLabel(child.parents)}
+          {age} años · {roomName}
         </div>
       </div>
-      {badge && !hasActiveParent ? (
-        <span className="flex-none rounded-full bg-[#F9D2DE] px-[9px] py-[5px] text-[11px] font-extrabold text-[#C56486]">
-          VINCULAR
-        </span>
-      ) : badge ? (
+      {badge ? (
         <span className="flex-none rounded-full bg-[#FBD8CC] px-[9px] py-[5px] text-[11px] font-extrabold text-[#D9684A]">
           {badge}
         </span>
