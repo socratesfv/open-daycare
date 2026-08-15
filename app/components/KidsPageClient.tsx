@@ -1,16 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SearchBar from "@/app/components/SearchBar";
 import ChildCard from "@/app/components/ChildCard";
-import AddChildModal from "@/app/components/AddChildModal";
-import { children } from "@/data/mock/children";
+import ChildFormModal from "@/app/components/ChildFormModal";
+import type { ChildRow, Room } from "@/utils/supabase/children";
 
-export default function KidsPageClient() {
+interface KidsPageClientProps {
+  kids: ChildRow[];
+  rooms: Room[];
+}
+
+export default function KidsPageClient({ kids, rooms }: KidsPageClientProps) {
   const [query, setQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const normalizedQuery = query.trim().toLowerCase();
-  const visibleChildren = children.filter((child) => child.name.toLowerCase().includes(normalizedQuery));
+
+  const groups = useMemo(() => {
+    const visible = kids.filter((child) =>
+      child.full_name.toLowerCase().includes(normalizedQuery),
+    );
+
+    return rooms
+      .map((room) => ({
+        room,
+        kids: visible.filter((child) => child.room_id === room.id),
+      }))
+      .filter((group) => group.kids.length > 0 || visible.length === 0);
+  }, [kids, rooms, normalizedQuery]);
+
+  const visibleCount = kids.filter((child) =>
+    child.full_name.toLowerCase().includes(normalizedQuery),
+  ).length;
 
   return (
     <>
@@ -44,21 +65,27 @@ export default function KidsPageClient() {
 
           <SearchBar value={query} onChange={setQuery} />
 
-          <div className="mb-[14px] flex items-center gap-3">
-            <span className="text-[12.5px] font-extrabold tracking-[0.8px] text-[#3F362E]">Sala Soles</span>
-            <span className="text-[13px] text-[#A89A8B]">
-              {visibleChildren.length} {visibleChildren.length === 1 ? "niño" : "niños"}
-            </span>
-            <span className="h-px flex-1 bg-[#E7DAC8]" />
-          </div>
+          {groups.map(({ room, kids }) => (
+            <div key={room.id} className="mb-[22px]">
+              <div className="mb-[14px] flex items-center gap-3">
+                <span className="text-[12.5px] font-extrabold uppercase tracking-[0.8px] text-[#3F362E]">
+                  Sala {room.name}
+                </span>
+                <span className="text-[13px] text-[#A89A8B]">
+                  {kids.length} {kids.length === 1 ? "niño" : "niños"}
+                </span>
+                <span className="h-px flex-1 bg-[#E7DAC8]" />
+              </div>
 
-          <div className="grid grid-cols-1 gap-[14px] md:grid-cols-2">
-            {visibleChildren.map((child) => (
-              <ChildCard key={child.id} child={child} />
-            ))}
-          </div>
+              <div className="grid grid-cols-1 gap-[14px] md:grid-cols-2">
+                {kids.map((child) => (
+                  <ChildCard key={child.id} child={child} roomName={room.name} />
+                ))}
+              </div>
+            </div>
+          ))}
 
-          {visibleChildren.length === 0 && (
+          {visibleCount === 0 && (
             <div className="mt-8 text-center text-sm font-semibold text-[#A89A8B]">
               No se encontraron niños con ese nombre.
             </div>
@@ -66,7 +93,7 @@ export default function KidsPageClient() {
         </div>
       </main>
 
-      <AddChildModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      {isAddModalOpen && <ChildFormModal onClose={() => setIsAddModalOpen(false)} rooms={rooms} />}
     </>
   );
 }

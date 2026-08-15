@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import AppLayout from "@/app/components/AppLayout";
 import ChildProfile from "@/app/components/ChildProfile";
-import { children } from "@/data/mock/children";
+import { getCurrentDaycareId, getChild, getRooms } from "@/utils/supabase/children";
 
 interface KidProfilePageProps {
   params: Promise<{ id: string }>;
@@ -10,7 +10,11 @@ interface KidProfilePageProps {
 
 export default async function KidProfilePage({ params }: KidProfilePageProps) {
   const { id } = await params;
-  const child = children.find((kid) => kid.id === id);
+
+  const daycareId = await getCurrentDaycareId();
+  if (!daycareId) redirect("/login");
+
+  const [child, rooms] = await Promise.all([getChild(id), getRooms(daycareId)]);
   if (!child) notFound();
 
   return (
@@ -35,7 +39,7 @@ export default async function KidProfilePage({ params }: KidProfilePageProps) {
             </svg>
             Volver a Niños
           </Link>
-          <ChildProfile child={child} />
+          <ChildProfile child={child} rooms={rooms} />
         </div>
       </main>
     </AppLayout>
