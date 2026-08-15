@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { User } from "@/data/mock/posts";
+import { signOut } from "@/utils/supabase/server-actions";
 
 interface NavItem {
   label: string;
@@ -138,13 +139,15 @@ export default function Sidebar({ user, activeItem = "Feed", isOpen = false, onC
                 {user.role} · {user.room}
               </div>
             </div>
-            <a
-              href="#"
-              title="Cerrar sesión"
-              className="flex h-8 w-8 flex-none items-center justify-center rounded-[10px] bg-[#F6ECDF] text-[#94887B]"
-            >
-              <LogoutIcon />
-            </a>
+            <form action={signOut} className="flex-none">
+              <button
+                type="submit"
+                title="Cerrar sesión"
+                className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#F6ECDF] text-[#94887B]"
+              >
+                <LogoutIcon />
+              </button>
+            </form>
           </div>
         </div>
       </aside>

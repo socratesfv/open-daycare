@@ -16,7 +16,7 @@
 - Crear trigger `AFTER INSERT` en `auth.users` para auto-crear fila en `users`
 - Activar RLS en tabla `users` con política de owner
 - Insertar 5 registros de prueba en tabla `daycares`
-- Insertar 1 usuario staff de prueba vinculado a un daycare
+- Crear 1 usuario staff real en Supabase Auth (`socratesfv@gmail.com` / `123abc@`) vinculado a un daycare
 
 **Fuera de alcance (specs futuros):**
 
@@ -132,14 +132,37 @@ INSERT INTO daycares (id, name) VALUES
   ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44', 'Guardería Sala Nubes'),
   ('e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55', 'Guardería Sala Colores');
 
--- 1 usuario staff de prueba (UUID fijo para testing)
-INSERT INTO users (id, daycare_id, role, status, full_name)
-VALUES (
-  '11111111-1111-1111-1111-111111111111',
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'staff',
-  'active',
-  'Staff de Prueba'
+-- 1 usuario staff real en Supabase Auth (login con email/password).
+-- El trigger handle_new_user crea automáticamente el perfil en public.users
+-- (role 'staff', daycare Sala Soles, full_name 'Staff de Prueba').
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  'authenticated',
+  'authenticated',
+  'socratesfv@gmail.com',
+  crypt('123abc@', gen_salt('bf')),
+  now(),
+  '{"provider":"email","providers":["email"]}',
+  '{"daycare_id":"a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11","role":"staff","full_name":"Staff de Prueba"}',
+  now(), now(),
+  '', ''
+);
+
+-- Identidad de email para que el sign-in resuelva el proveedor correctamente
+INSERT INTO auth.identities (
+  id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+) VALUES (
+  'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  jsonb_build_object('sub', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'email', 'socratesfv@gmail.com'),
+  'email',
+  now(), now(), now()
 );
 ```
 
@@ -180,7 +203,8 @@ Convenciones:
 
 6. **Insertar datos de prueba**
    - Insertar 5 registros en `daycares` con UUIDs fijos
-   - Insertar 1 usuario staff de prueba vinculado al primer daycare
+   - Crear el usuario staff real en `auth.users` (email `socratesfv@gmail.com`, password `123abc@` hasheado, email confirmado) con metadata `daycare_id`, `role` y `full_name` — el trigger `handle_new_user` crea el perfil en `users`
+   - Insertar la identidad de email en `auth.identities` para el sign-in con password
    - Verificar que los datos se insertaron correctamente
 
 7. **Verificación final**
@@ -209,7 +233,9 @@ Convenciones:
 - [ ] Índice en `daycare_id` creado
 - [ ] Índice en `role` creado
 - [ ] 5 registros insertados en daycares
-- [ ] 1 usuario staff insertado en users
+- [ ] 1 usuario staff real en auth.users (`socratesfv@gmail.com`) con password hasheado y email confirmado
+- [ ] Identidad de email creada en auth.identities para el usuario staff
+- [ ] Perfil del usuario staff auto-creado en `users` por el trigger (role staff, daycare Sala Soles)
 - [ ] La migración se aplicó sin errores
 
 ---
@@ -221,6 +247,7 @@ Convenciones:
 - **Sí:** Crear trigger `AFTER INSERT` en `auth.users` para auto-crear la fila. Es el patrón estándar de Supabase para vincular Auth con datos de dominio.
 - **Sí:** Usar `ON DELETE SET NULL` en `daycare_id`. Si se elimina un daycare, los usuarios no se eliminan — se desvinculan.
 - **Sí:** Datos de prueba con UUIDs fijos. Facilita testing manual y consistente entre ejecuciones.
+- **Sí:** Crear el usuario staff como cuenta real en `auth.users` (email/password) en lugar de una fila suelta en `users` sin login. El trigger crea el perfil automáticamente. Migración: `20260814235107_replace_test_staff_user_with_socratesfv`.
 - **No:** No crear los otros 4 enums del esquema. Se crearán en specs futuros cuando se implementen las tablas relacionadas.
 - **No:** No insertar usuarios parent o admin de prueba. Solo staff es necesario para las primeras pruebas.
 - **No:** No migrar datos mock existentes a la base de datos. Se hará en un spec dedicado de migración.
@@ -232,7 +259,7 @@ Convenciones:
 | Riesgo | Mitigación |
 |--------|------------|
 | Trigger puede fallar si auth.users ya tiene usuarios | Los usuarios existentes no tendrán fila en users. Se puede migrar manualmente después. |
-| RLS puede bloquear inserts directos | La política de owner permite inserts propios. El staff de prueba se inserta directamente. |
+| RLS puede bloquear inserts directos | La política de owner permite inserts propios. El perfil del staff se crea vía el trigger de auth.users, no con insert directo en users. |
 | UUIDs fijos pueden colisionar con datos futuros | Usar rangos altos (1111..., a0ee...) para evitar conflicto con UUIDs generados. |
 
 ---
