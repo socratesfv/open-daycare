@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import MobileMenu from "@/app/components/MobileMenu";
+import AppLayout from "@/app/components/AppLayout";
 import ChildProfile from "@/app/components/ChildProfile";
 import { children } from "@/data/mock/children";
-import { currentUser } from "@/data/mock/posts";
 
 interface KidProfilePageProps {
   params: Promise<{ id: string }>;
@@ -15,7 +14,7 @@ export default async function KidProfilePage({ params }: KidProfilePageProps) {
   if (!child) notFound();
 
   return (
-    <MobileMenu user={currentUser} activeItem="Niños">
+    <AppLayout activeItem="Niños">
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[820px] px-10 pb-20 pt-[84px] md:pt-[34px]">
           <Link
@@ -39,6 +38,6 @@ export default async function KidProfilePage({ params }: KidProfilePageProps) {
           <ChildProfile child={child} />
         </div>
       </main>
-    </MobileMenu>
+    </AppLayout>
   );
 }

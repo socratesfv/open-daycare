@@ -1,6 +1,4 @@
-"use client";
-
-import MobileMenu from "@/app/components/MobileMenu";
+import AppLayout from "@/app/components/AppLayout";
 import FeedHeader from "@/app/components/FeedHeader";
 import CreatePostCard from "@/app/components/CreatePostCard";
 import FeedPost from "@/app/components/FeedPost";
@@ -8,7 +6,7 @@ import { currentUser, posts } from "@/data/mock/posts";
 
 export default function Home() {
   return (
-    <MobileMenu user={currentUser}>
+    <AppLayout>
       <main className="h-screen min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-[760px] px-10 py-[34px] pb-20 md:pt-[34px] pt-[84px]">
           <FeedHeader greeting="Buenas, Caro" room="Sala Soles" kidsCount={12} dateLabel="martes 17 jun" />
@@ -26,6 +24,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-    </MobileMenu>
+    </AppLayout>
   );
 }
